@@ -1,0 +1,166 @@
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--accent); }
+
+.auth-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.auth-screen .card { width: 340px; }
+.auth-screen h2 { margin-top: 0; }
+
+input, select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.auth-screen input, .auth-screen select {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+button.primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.auth-screen button.primary { width: 100%; }
+
+button.sm {
+  background: var(--border);
+  color: var(--text);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+button.sm.danger { background: rgba(239, 68, 68, .2); color: var(--red); }
+
+.toggle {
+  font-size: 12px;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.err { color: var(--red); font-size: 13px; margin-top: 6px; }
+.ok-msg { color: var(--green); font-size: 13px; margin-top: 6px; }
+
+.app-shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 200px;
+  border-right: 1px solid var(--border);
+  padding: 16px 0;
+  flex-shrink: 0;
+}
+
+.sidebar h1 {
+  font-size: 16px;
+  padding: 0 16px 16px;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; }
+
+.sidebar nav a {
+  display: block;
+  text-decoration: none;
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.sidebar nav a.active, .sidebar nav a:hover { background: var(--accent); color: #fff; }
+
+.main-col { flex: 1; display: flex; flex-direction: column; }
+
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.navbar a { color: var(--muted); }
+
+main.content { padding: 24px; max-width: 1100px; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+
+.kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.kpi .val { font-size: 26px; font-weight: 700; }
+.kpi .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; }
+
+.badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.b-available, .b-completed { background: rgba(34,197,94,.15); color: var(--green); }
+.b-ontrip, .b-dispatched { background: rgba(245,158,11,.15); color: var(--amber); }
+.b-inshop, .b-suspended, .b-cancelled, .b-retired { background: rgba(239,68,68,.15); color: var(--red); }
+.b-draft, .b-offduty { background: rgba(148,163,184,.15); color: var(--muted); }
+
+form.inline-form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+.export-link {
+  display: inline-block;
+  margin-bottom: 12px;
+  margin-right: 8px;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+.export-link.csv { background: var(--border); color: var(--text); }
+.export-link.pdf { background: var(--accent); color: #fff; }
