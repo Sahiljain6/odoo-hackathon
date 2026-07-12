@@ -5,8 +5,21 @@ import StatusBadge from '../components/StatusBadge';
 
 export default function Trips() {
   const { data: trips, loading, error, refetch } = useFetch('/trips');
-  const { data: vehicles } = useFetch('/vehicles?dispatchable=true');
-  const { data: drivers } = useFetch('/drivers?dispatchable=true');
+  const { data: vehicles, refetch: refetchVehicles } = useFetch('/vehicles');
+  const { data: drivers, refetch: refetchDrivers } = useFetch('/drivers');
+
+  // eligibility computed client-side from the FULL list, so a driver/vehicle
+  // is always visible in the dropdown — ineligible ones are shown disabled
+  // with a reason, instead of silently disappearing
+  const isVehicleEligible = (v) => v.status === 'Available';
+  const isDriverEligible = (d) => d.status === 'Available' && new Date(d.license_expiry_date) >= new Date(new Date().toDateString());
+
+  const vehicleReason = (v) => (v.status !== 'Available' ? ` — ${v.status}` : '');
+  const driverReason = (d) => {
+    if (d.status !== 'Available') return ` — ${d.status}`;
+    if (new Date(d.license_expiry_date) < new Date(new Date().toDateString())) return ' — license expired';
+    return '';
+  };
 
   const [form, setForm] = useState({ source: '', destination: '', vehicle_id: '', driver_id: '', cargo_weight: '', planned_distance: '' });
   const [formError, setFormError] = useState('');
@@ -26,6 +39,8 @@ export default function Trips() {
       });
       setForm({ source: '', destination: '', vehicle_id: '', driver_id: '', cargo_weight: '', planned_distance: '' });
       refetch();
+      refetchVehicles();
+      refetchDrivers();
     } catch (err) {
       setFormError(err.message);
     }
@@ -35,6 +50,8 @@ export default function Trips() {
     try {
       await client.patch(`/trips/${id}/${action}`);
       refetch();
+      refetchVehicles();
+      refetchDrivers();
     } catch (err) {
       alert(err.message);
     }
@@ -51,6 +68,8 @@ export default function Trips() {
         final_odometer: +final_odometer, fuel_consumed: +fuel_consumed, fuel_cost: +fuel_cost, revenue: +revenue
       });
       refetch();
+      refetchVehicles();
+      refetchDrivers();
     } catch (err) {
       alert(err.message);
     }
@@ -67,13 +86,17 @@ export default function Trips() {
         <select value={form.vehicle_id} onChange={update('vehicle_id')} required>
           <option value="" disabled>Vehicle</option>
           {(vehicles || []).map((v) => (
-            <option key={v.id} value={v.id}>{v.registration_number} (max {v.max_load_capacity}kg)</option>
+            <option key={v.id} value={v.id} disabled={!isVehicleEligible(v)}>
+              {v.registration_number} (max {v.max_load_capacity}kg){vehicleReason(v)}
+            </option>
           ))}
         </select>
         <select value={form.driver_id} onChange={update('driver_id')} required>
           <option value="" disabled>Driver</option>
           {(drivers || []).map((d) => (
-            <option key={d.id} value={d.id}>{d.name}</option>
+            <option key={d.id} value={d.id} disabled={!isDriverEligible(d)}>
+              {d.name}{driverReason(d)}
+            </option>
           ))}
         </select>
         <input placeholder="Cargo weight (kg)" type="number" value={form.cargo_weight} onChange={update('cargo_weight')} required />
