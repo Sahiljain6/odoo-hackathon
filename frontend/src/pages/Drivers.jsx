@@ -14,9 +14,19 @@ export default function Drivers() {
 
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
+  // digits only, max 10 chars — blocks bad input at the source instead of rejecting after submit
+  const updatePhone = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setForm({ ...form, contact_number: digitsOnly });
+  };
+
   const handleAdd = async (e) => {
     e.preventDefault();
     setFormError('');
+    if (form.contact_number && form.contact_number.length !== 10) {
+      setFormError('Contact number must be exactly 10 digits');
+      return;
+    }
     try {
       await client.post('/drivers', form);
       setForm({ name: '', license_number: '', license_expiry_date: '', contact_number: '' });
@@ -36,7 +46,8 @@ export default function Drivers() {
           <input placeholder="Name" value={form.name} onChange={update('name')} required />
           <input placeholder="License number" value={form.license_number} onChange={update('license_number')} required />
           <input type="date" value={form.license_expiry_date} onChange={update('license_expiry_date')} required />
-          <input placeholder="Contact number" value={form.contact_number} onChange={update('contact_number')} />
+          <input placeholder="Contact number (10 digits)" value={form.contact_number} onChange={updatePhone}
+                 inputMode="numeric" pattern="\d{10}" maxLength={10} />
           <button className="primary" type="submit">Add Driver</button>
         </form>
       )}
