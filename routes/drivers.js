@@ -7,6 +7,11 @@ router.use(authenticate);
 
 router.post('/', requireRole('fleet_manager', 'safety_officer'), (req, res) => {
   const { name, license_number, license_category, license_expiry_date, contact_number } = req.body;
+
+  if (contact_number && !/^\d{10}$/.test(contact_number)) {
+    return res.status(400).json({ error: 'Contact number must be exactly 10 digits' });
+  }
+
   try {
     const result = db.prepare(`
       INSERT INTO drivers (name, license_number, license_category, license_expiry_date, contact_number)
@@ -37,6 +42,9 @@ router.get('/compliance/expiring', requireRole('safety_officer', 'fleet_manager'
 });
 
 router.patch('/:id', requireRole('fleet_manager', 'safety_officer'), (req, res) => {
+  if (req.body.contact_number && !/^\d{10}$/.test(req.body.contact_number)) {
+    return res.status(400).json({ error: 'Contact number must be exactly 10 digits' });
+  }
   const fields = ['name', 'license_category', 'license_expiry_date', 'contact_number', 'safety_score', 'status'];
   const updates = [];
   const params = [];
